@@ -3,62 +3,82 @@ const sequelize = require('../config/connection');
 const { Post, User, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
-// Dashboard To Post Route
-router.post('/post', withAuth, (req, res) => {
-  // expects {title: 'Taskmaster goes public!', post_url: 'https://taskmaster.com/press', user_id: 1}
-  Post.create({
-    title: req.body.title,
-    content: req.body.content,
-    user_id: req.session.user_id,
-  })
-    .then(dbPostData => res.json(dbPostData))
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    });
-});
-//Dashboard To Update Route
-router.put('/put', withAuth, (req, res) => {
-  Post.update(
-    {
-      title: req.body.title,
-      content: req.body.content,
-    },
-    {
-      where: {
-        id: req.params.id
-      }
-    }
-  )
-    .then(dbPostData => {
-      if (!dbPostData) {
-        res.status(404).json({ message: 'No update able to occur' });
-        return;
-      }
-      res.json(dbPostData);
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    });
-});
-// Dashboard To Delete A Route
-router.delete('/delete', withAuth, (req, res) => {
-  Post.destroy({
+// get all posts for dashboard
+router.get('/', withAuth, (req, res) => {
+  console.log(req.session);
+  console.log('======================');
+  Post.findAll({
     where: {
-      id: req.params.id
-    }
+      user_id: req.session.user_id
+    },
+    attributes: [
+      'id',
+      'post_url',
+      'title',
+      'created_at'
+    include: [
+      {
+        model: Comment,
+        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+        include: {
+          model: User,
+          attributes: ['username']
+        }
+      },
+      {
+        model: User,
+        attributes: ['username']
+      }
+    ]
   })
     .then(dbPostData => {
-      if (!dbPostData) {
-        res.status(404).json({ message: 'No post data found with this id' });
-        return;
-      }
-      res.json(dbPostData);
+      const posts = dbPostData.map(post => post.get({ plain: true }));
+      res.render('dashboard', { posts, loggedIn: true });
     })
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
 });
+
+router.get('/edit/:id', withAuth, (req, res) => {
+  Post.findByPk(req.params.id, {
+    attributes: [
+      'id',
+      'post_url',
+      'title',
+      'created_at',
+  
+    include: [
+      {
+        model: Comment,
+        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+        include: {
+          model: User,
+          attributes: ['username']
+        }
+      },
+      {
+        model: User,
+        attributes: ['username']
+      }
+    ]
+  })
+    .then(dbPostData => {
+      if (dbPostData) {
+        const post = dbPostData.get({ plain: true });
+        
+        res.render('edit-post', {
+          post,
+          loggedIn: true
+        });
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
+
 module.exports = router;
