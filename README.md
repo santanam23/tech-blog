@@ -1,7 +1,7 @@
 # Tech-Blog
   
   ## Description 
-  This is a project that contains CMS-style blog site. Developers first have to create an account, then they can add post or comment on blogs. The app uses Handlebars as a template language, Sequelize as ORM and express-session npm package.
+  This is a project that contains CMS-style blog site. Developers first have to create an account, then they can publish articles, blog posts, and our thoughts and opinions. The app uses Handlebars as a template language, Sequelize as ORM and express-session npm package.
   ## Table of Contents
   * [Installation](#installation)
 
@@ -24,7 +24,9 @@
 
 
   ## Usage 
-  Make sure to run all of the dependencies before running the application.
+  Make sure to run all of the dependencies before running the application. 
+  Deployed Heroku Application [Click For Application](https://miriams-blog-app.herokuapp.com/ "Live")      
+]
 
   ## License & Copyright
   This project is license under MIT

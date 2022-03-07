@@ -1,10 +1,12 @@
 const router = require('express').Router();
-const { User, Comment, Post } = require('../../models');
+const { User, Post, Comment } = require('../../models');
 
 // GET /api/users
 router.get('/', (req, res) => {
     // Access our User model and run .findAll() method)
-    User.findAll()
+    User.findAll({
+      attributes: { exclude: ['password'] }
+    })
     .then(dbUserData => res.json(dbUserData))
     .catch(err => {
         console.log(err);
@@ -30,7 +32,7 @@ router.get('/:id', (req, res) => {
         },  
         {
           model: Comment,
-          attributes: ['id', 'content', 'created_at'],
+          attributes: ['id', 'comment_text', 'created_at'],
           include: {
               model: Post,
               attributes: ['title']
@@ -61,7 +63,6 @@ router.post('/', (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
   User.create({
     username: req.body.username,
-    email: req.body.email,
     password: req.body.password
   })
   .then(dbUserData => {
@@ -83,7 +84,7 @@ router.post('/login', (req, res) => {
   // expects {email: 'lernantino@gmail.com', password: 'password1234'}
   User.findOne({
     where: {
-      email: req.body.email
+      username: req.body.username
     }
   }).then(dbUserData => {
     if (!dbUserData) {
@@ -125,6 +126,7 @@ router.put('/:id', (req, res) => {
 
 // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
     User.update(req.body, {
+    individualHooks: true,
     where: {
         id: req.params.id
     }
