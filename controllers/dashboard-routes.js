@@ -42,10 +42,14 @@ router.get('/', withAuth, (req, res) => {
 });
 
 router.get('/edit/:id', withAuth, (req, res) => {
-  Post.findByPk(req.params.id, {
+  Post.findByPk({
+    where: {
+      id: req.params.id
+    },
     attributes: [
       'id',
       'content',
+      'title',
       'created_at',
     ],
     include: 
