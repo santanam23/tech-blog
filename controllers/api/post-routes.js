@@ -44,6 +44,7 @@ router.get('/:id', (req, res) => {
       id: req.params.id
     },
     attributes: [
+      'id',
       'content',
       'title',
       'created_at',
@@ -61,10 +62,6 @@ router.get('/:id', (req, res) => {
         attributes: ['username']
         }
     },
-    {
-        model: User,
-        attributes: ['username']
-    }
     ]
   })
     .then(dbPostData => {
