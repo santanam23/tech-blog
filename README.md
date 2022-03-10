@@ -25,7 +25,7 @@
 
   ## Usage 
   Make sure to run all of the dependencies before running the application. 
-  Deployed Heroku Application [Click For Application](https://miriams-blog-app.herokuapp.com/ "Live")      
+  Deployed Heroku Application [Heroku App](https://miriams-blog-app.herokuapp.com/ "Live")      
 ]
 
   ## License & Copyright
